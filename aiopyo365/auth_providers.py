@@ -29,8 +29,7 @@ class GraphAuthProvider(object):
     _grant_type: str = field(init=False, default="client_credentials")
     _expiration_time: datetime = field(init=False, default_factory=datetime.now)
 
-    @property
-    def auth_header(self) -> Dict[str, str]:
+    async def auth(self) -> Dict[str, str]:
         """Exposes a property auth_header that return a dict with authorization infos
         handle refreshing the token when it is expired.
 
@@ -38,7 +37,7 @@ class GraphAuthProvider(object):
             Dict[str, str]: authorization infos
         """
         if not self._access_token or self._is_token_expire():
-            asyncio.run(self._fetch_access_token())
+            await self._fetch_access_token()
         return {"authorization": f"{self._token_type} {self._access_token}"}
 
     def __post_init__(self):

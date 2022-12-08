@@ -7,6 +7,7 @@ import asyncio
 
 load_dotenv()
 
+
 def test_graph_auth_provider_init():
     try:
         GraphAuthProvider(
@@ -18,7 +19,6 @@ def test_graph_auth_provider_init():
         pytest.fail("Fail init")
 
 
-
 @pytest.fixture(scope="session")
 def graph_auth_provider():
     return GraphAuthProvider(
@@ -28,15 +28,19 @@ def graph_auth_provider():
     )
 
 
-def test_fetch_access_token(graph_auth_provider):
+@pytest.mark.asyncio
+async def test_fetch_access_token(graph_auth_provider):
     try:
-       asyncio.run(graph_auth_provider._fetch_access_token())
+        await graph_auth_provider._fetch_access_token()
     except Exception:
         pytest.fail("Fail fetch token")
 
-def test_auth_header_is_present(graph_auth_provider):
-    auth = graph_auth_provider.auth_header
+
+@pytest.mark.asyncio
+async def test_auth_header_is_present(graph_auth_provider):
+    auth = await graph_auth_provider.auth()
     assert auth["authorization"]
+
 
 def test_expiration_time_token_is_false(graph_auth_provider):
     asyncio.run(graph_auth_provider._fetch_access_token())
