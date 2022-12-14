@@ -1,7 +1,7 @@
 import aiohttp
-from factories.abstract import AbstractFactory
 from dataclasses import dataclass
 from aiopyo365.ressources.sites import Site
+from aiopyo365.factories.abstract import AbstractFactory
 
 
 @dataclass
