@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from aiopyo365.auth_providers import GraphAuthProvider
+from aiopyo365.providers.auth import GraphAuthProvider
 from dotenv import load_dotenv
 import os
 import pytest

@@ -1,10 +1,8 @@
-from aiopyo365.auth_providers import GraphAuthProvider
-from aiopyo365.services import SharePointService
-from aiopyo365.clients import SharePointClient
+from aiopyo365.providers.auth import GraphAuthProvider
+from aiopyo365.services.sharepoint import SharePointService
 from dotenv import load_dotenv
 import pytest
 import os
-import aiohttp
 
 load_dotenv()
 
@@ -18,21 +16,6 @@ def auth_provider():
     )
 
 
-@pytest.mark.asyncio
-async def test_sharepoint_client_init(auth_provider):
-    try:
-        auth_header = await auth_provider.auth()
-        session = aiohttp.ClientSession(headers=auth_header)
-        sharepoint = await SharePointClient.create(
-            os.environ["SHAREPOINT_HOSTNAME"],
-            os.environ["SHAREPOINT_SITE"],
-            session=session,
-        )
-        await session.close()
-    except Exception:
-        pytest.fail("Fail init")
-
-
 @pytest.fixture
 def small_file_path():
     return "tests/test_data/small.txt"
@@ -44,12 +27,22 @@ def large_file_path():
 
 
 @pytest.mark.asyncio
+async def test_upload_small_file(auth_provider, small_file_path):
+    async with SharePointService(
+        auth_provider, os.environ["SHAREPOINT_HOSTNAME"], os.environ["SHAREPOINT_SITE"]
+    ) as sharepoint:
+        resp = await sharepoint.upload(
+            small_file_path, "small_file", conflict_behavior="replace"
+        )
+        assert resp["createdDateTime"]
+
+
+@pytest.mark.asyncio
 async def test_upload_large_file(auth_provider, large_file_path):
     async with SharePointService(
         auth_provider, os.environ["SHAREPOINT_HOSTNAME"], os.environ["SHAREPOINT_SITE"]
     ) as sharepoint:
-        file_size = os.path.getsize(large_file_path)
-        resp = await sharepoint._upload_large_file(
-            large_file_path, file_size, "large_file"
+        resp = await sharepoint.upload(
+            large_file_path, "large_file", conflict_behavior="replace"
         )
-        print(resp)
+        assert resp["createdDateTime"]
