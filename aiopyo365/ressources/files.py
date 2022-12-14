@@ -9,7 +9,7 @@ https://learn.microsoft.com/en-us/graph/api/resources/onedrive?view=graph-rest-1
 
 import aiohttp
 from dataclasses import dataclass, field
-from typing import Coroutine, Generator, Literal
+from typing import Coroutine, Literal
 
 
 @dataclass
@@ -86,7 +86,6 @@ class DriveItems(object):
         conflict_behavior: Literal["fail", "replace", "rename"] = "fail",
     ) -> Coroutine:
         """Upload large file (> 4MB) using an upload session. File should be less than 60MB.
-
         ref: https://docs.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0#upload-bytes-to-the-upload-session
 
         Arg(s):
