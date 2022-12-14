@@ -1,5 +1,5 @@
-import config
 import aiohttp
+import aiopyo365.config as config
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
