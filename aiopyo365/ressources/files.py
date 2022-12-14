@@ -8,22 +8,17 @@ available services:
 """
 
 
-from dataclasses import dataclass, field
-from typing import Coroutine, Generator, Literal
 import aiohttp
 import os
-import abc
+import aiopyo365.clients.factories as factories
+from dataclasses import dataclass, field
+from typing import Coroutine, Generator, Literal
 
 
 @dataclass
-class AbstractGraphClient(abc.ABC):
-    session: aiohttp.ClientSession
-    _base_url: str = field(init=False, default="https://graph.microsoft.com/v1.0")
-
-
-@dataclass
-class SharePointClient(AbstractGraphClient):
-    """Class that encapsulate API calls to deals with Sharepoint sites ressource.
+class DriveItems(object):
+    """Class that encapsulate API calls to deals with drive items ressource.
+     ref : https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0
 
     Arg(s):
         auth_client: a client with Microsoft graph auth capabilities
@@ -31,31 +26,10 @@ class SharePointClient(AbstractGraphClient):
         site_name: name of sharepoint site to interact with
 
     """
-
-    hostname: str
-    site_name: str
-    _site_id: str = field(init=False)
+    base_url: str
+    session: aiohttp.ClientSession
     _max_upload_size: int = field(init=False, default=60000000)
 
-    @classmethod
-    async def create(
-        cls, hostname: str, site_name: str, session: aiohttp.ClientSession
-    ):
-        """Factory method to create an instace of the SharePointClient class
-
-        Args:
-            hostname (str): Name of the sharepoint host to connect
-            site_name (str): site Name to connect
-            session (aiohttp.ClientSession): session to use to perfom requests
-
-        Returns:
-            SharePointClient : instancied SharePointClient
-        """
-
-        self = SharePointClient(hostname=hostname, site_name=site_name, session=session)
-        resp = await self._fetch_site_id()
-        self._site_id = resp["id"]
-        return self
 
     async def list_children(self, item_id: str) -> Coroutine:
         """List all children items from item_id.
@@ -68,7 +42,7 @@ class SharePointClient(AbstractGraphClient):
             A Coroutine
         """
         async with self.session.get(
-            f"{self._base_url}/sites/{self._site_id}/drive/items/{item_id}/children"
+            f"{self.base_url}/drive/items/{item_id}/children"
         ) as resp:
             resp.raise_for_status()
             return await resp.json()
@@ -83,12 +57,12 @@ class SharePointClient(AbstractGraphClient):
             A Coroutine
         """
         async with self.session.get(
-            f"{self._base_url}/sites/{self._site_id}/drive/root/search(q='{query}')"
+            f"{self.base_url}/drive/root/search(q='{query}')"
         ) as resp:
             resp.raise_for_status()
             return await resp.json()
 
-    async def upload_file(self, file_path: str, file_name: str) -> None:
+    async def upload(self, file_path: str, file_name: str) -> None:
         """Upload file to sharepoint.
 
         Arg(s):
@@ -104,13 +78,6 @@ class SharePointClient(AbstractGraphClient):
                 file_path, file_size, file_name, conflict_behavior="replace"
             )
 
-    async def _fetch_site_id(self) -> Coroutine:
-        """Fetch sites id from site name in order to interact with other API method that require site id and not site name"""
-        async with self.session.get(
-            f"{self._base_url}/sites/{self.hostname}:/sites/{self.site_name}"
-        ) as resp:
-            resp.raise_for_status()
-            return await resp.json()
 
     async def _upload_small_file(self, path: str, file_name: str) -> Coroutine:
         """Upload file less than 4 MB to sharepoint.
@@ -123,7 +90,7 @@ class SharePointClient(AbstractGraphClient):
         Return:
             A request Response object
         """
-        endpoint = f"{self._base_url}/sites/{self._site_id}/drive/items/root:/{file_name}:/content"
+        endpoint = f"{self.base_url}/drive/items/root:/{file_name}:/content"
         content = self._read_file(path)
         headers = {"Content-Type": "application/octet-stream"}
         async with self.session.put(
@@ -189,7 +156,7 @@ class SharePointClient(AbstractGraphClient):
             }
         }
         async with self.session.post(
-            f"{self._base_url}/sites/{self._site_id}/drive/items/root:/{upload_filename}:/createUploadSession",
+            f"{self._base_url}/drive/items/root:/{upload_filename}:/createUploadSession",
             params=str(data),
         ) as resp:
             resp.raise_for_status()
