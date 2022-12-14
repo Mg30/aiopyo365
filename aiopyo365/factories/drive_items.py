@@ -1,7 +1,7 @@
 import aiohttp
-from factories.abstract import AbstractFactory
 from dataclasses import dataclass
 from aiopyo365.ressources.files import DriveItems
+from aiopyo365.factories.abstract import AbstractFactory
 
 
 @dataclass
@@ -14,7 +14,10 @@ class DriveItemsSitesFactory(AbstractFactory):
 
     def create(self, session: aiohttp.ClientSession) -> DriveItems:
         url = f"{self._base_url}/sites/{self.site_id}"
-        return DriveItems(base_url=url, session=session)
+        return DriveItems(
+            base_url=url,
+            session=session,
+        )
 
 
 @dataclass
