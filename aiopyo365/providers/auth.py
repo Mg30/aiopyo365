@@ -9,7 +9,6 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Dict
 import aiohttp
-import asyncio
 
 
 @dataclass
@@ -20,6 +19,7 @@ class GraphAuthProvider(object):
     {"authorization": "token_type access_token"}
     It handle refreshing the token when it is expired.
     """
+
     client_id: str
     client_secret: str
     tenant_id: str
