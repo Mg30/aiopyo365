@@ -1,0 +1,23 @@
+
+name: aiopyo365-release
+on:
+  push:
+    tags:
+      - v.**
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+      - name: Install poetry
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+      - name: "Build project and publish to PyPi"
+        run: |
+          source $HOME/.poetry/env
+          poetry install --no-dev
+          poetry build
