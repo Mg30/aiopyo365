@@ -85,6 +85,8 @@ here we work with a driveItems dedicated to SharePoint (site).
 ```python
 import asyncio
 import aiohttp
+import os
+from aiopyo365.providers.auth import GraphAuthProvider
 from aiopyo365.factories.drive_items import DriveItemsSitesFactory
 
 async def upload_smallfile(content,file_name):
@@ -102,13 +104,13 @@ async def upload_smallfile(content,file_name):
 
 ## Services
 
-`aiopyo365` provide also service class that encapsulate may ressource to match business logic. It hides dealing with instanciate class client and so on.
+`aiopyo365` provide also service class that encapsulate many ressource to match business logic. It hides dealing with instanciate class client and so on.
 Let's reuse the upload of a file example from above and use the `SharePointService`
 
 ```python
-import asyncio
-import aiohttp
-from aiopyo365.factories.drive_items import DriveItemsSitesFactory
+import os
+from aiopyo365.providers.auth import GraphAuthProvider
+from aiopyo365.services.sharepoint import SharePointService
 
 async def upload_smallfile(content,file_name):
     auth_provider =  GraphAuthProvider(
