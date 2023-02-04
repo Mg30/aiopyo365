@@ -135,3 +135,13 @@ class DriveItems(object):
         ) as resp:
             resp.raise_for_status()
             return await resp.json()
+
+    async def download_file(self, item_id):
+        async with self.session.get(f"{self.base_url}/drive/items/{item_id}?select=id,@microsoft.graph.downloadUrl") as resp:
+            if resp.status == 200:
+                response_json = await resp.json()
+                download_url = response_json["@microsoft.graph.downloadUrl"]
+                async with self.session.get(download_url) as download_resp:
+                    return await download_resp.read()
+            else:
+                raise ValueError(f"{resp.text}")
