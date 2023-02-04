@@ -64,6 +64,11 @@ class SharePointService(object):
                 content, file_byte_size, file_name, conflict_behavior=conflict_behavior
             )
 
+    async def download(self, item_id: str, path: str):
+        content = await self._drive_items_client.download_file(item_id)
+        with open(path, "wb") as file:
+            file.write(content)
+
     def _read_file_as_bytes(self, path: str) -> bytes:
         """Read a file at path and return its content as bytes
 
