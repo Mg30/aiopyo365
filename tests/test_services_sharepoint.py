@@ -46,3 +46,10 @@ async def test_upload_large_file(auth_provider, large_file_path):
             large_file_path, "large_file", conflict_behavior="replace"
         )
         assert resp["createdDateTime"]
+
+@pytest.mark.asyncio
+async def test_download(auth_provider):
+    async with SharePointService(
+        auth_provider, os.environ["SHAREPOINT_HOSTNAME"], os.environ["SHAREPOINT_SITE"]
+    ) as sharepoint:
+        await sharepoint.download(item_id="01WC3XZVGGTAUUPZCRVNHJKS5AY5P7ZZW6", path="test")
