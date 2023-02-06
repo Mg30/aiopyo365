@@ -69,6 +69,12 @@ class SharePointService(object):
         with open(path, "wb") as file:
             file.write(content)
 
+    async def list_files(self, parent_id: str):
+        return await self._drive_items_client.list_children(parent_id)
+
+    async def search_item(self, query: str):
+        return await self._drive_items_client.search_item(query)
+
     def _read_file_as_bytes(self, path: str) -> bytes:
         """Read a file at path and return its content as bytes
 

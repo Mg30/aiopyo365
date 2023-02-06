@@ -47,9 +47,36 @@ async def test_upload_large_file(auth_provider, large_file_path):
         )
         assert resp["createdDateTime"]
 
+
 @pytest.mark.asyncio
 async def test_download(auth_provider):
     async with SharePointService(
         auth_provider, os.environ["SHAREPOINT_HOSTNAME"], os.environ["SHAREPOINT_SITE"]
     ) as sharepoint:
-        await sharepoint.download(item_id="01WC3XZVGGTAUUPZCRVNHJKS5AY5P7ZZW6", path="test")
+        await sharepoint.download(
+            item_id="01WC3XZVGGTAUUPZCRVNHJKS5AY5P7ZZW6", path="test"
+        )
+        assert os.path.exists("test")
+        os.remove("test")
+
+
+@pytest.mark.asyncio
+async def test_search_item(auth_provider):
+    async with SharePointService(
+        auth_provider, os.environ["SHAREPOINT_HOSTNAME"], os.environ["SHAREPOINT_SITE"]
+    ) as sharepoint:
+        resp = await sharepoint.search_item(query="Traitements")
+
+        assert resp["value"]
+
+
+@pytest.mark.asyncio
+async def test_list_files(auth_provider):
+    async with SharePointService(
+        auth_provider, os.environ["SHAREPOINT_HOSTNAME"], os.environ["SHAREPOINT_SITE"]
+    ) as sharepoint:
+        resp = await sharepoint.list_files(
+            parent_id="01WC3XZVEWH2HC7QEWE5DIX4KHFWABH2TU"
+        )
+
+        assert resp["value"]
