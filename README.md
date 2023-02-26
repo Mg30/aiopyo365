@@ -3,7 +3,14 @@
 Async wrapper for Python >= 3.8 around [Microsoft v1.0 graph API](https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0&preserve-view=true).
 
 
+## Installation
+
+`pip install aiopyo365`
+
+
 ## Requirements
+
+python 3.8 or greater
 
 ### Application registration
 Microsoft Graph APi requires to be authentificated. You will need to 
