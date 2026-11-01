@@ -1,5 +1,14 @@
 # aiopyo365
 
+**Project background:** aiopyo365 was started in December 2022, when Microsoft's
+official Python SDK was still in
+[public preview](https://devblogs.microsoft.com/microsoft365dev/introducing-the-microsoft-graph-python-sdk-now-available-for-public-preview/).
+It provides a lightweight asynchronous client focused on selected Microsoft Graph
+and SharePoint operations. For new integrations, consider the
+[official Microsoft Graph Python SDK](https://github.com/microsoftgraph/msgraph-sdk-python),
+which reached
+[general availability in November 2023](https://devblogs.microsoft.com/microsoft365dev/introducing-the-microsoft-graph-python-sdk/).
+
 An asynchronous Python client for selected
 [Microsoft Graph v1.0](https://learn.microsoft.com/en-us/graph/api/overview?view=graph-rest-1.0)
 resources, built on `aiohttp`. It provides client-credentials authentication,
